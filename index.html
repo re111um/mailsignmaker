@@ -177,7 +177,14 @@ for (const id of ['name','title','email','mobile']) {
 }
 document.getElementById('copyHtml').addEventListener('click', copyHtml);
 document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
-build();
+(function initPreview() {
+  const run = () => build();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run, { once: true });
+  } else {
+    run();
+  }
+})();
 </script>
 </body>
 </html>
