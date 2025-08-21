@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회사 메일 서명 생성기 (최종 v8)</title>
+<style>
+  :root { --radius: 16px; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; margin: 24px; background:#fff; color:#111; }
+  .card { max-width: 880px; padding: 20px; border: 1px solid #e5e7eb; border-radius: var(--radius); box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  label { font-weight: 600; font-size: 14px; color:#111; display:block; margin-bottom: 6px; }
+  input { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; }
+  .row { display:flex; gap:12px; align-items:center; }
+  .btn { cursor:pointer; padding:10px 14px; border-radius:12px; border:1px solid #d1d5db; background:#111; color:#fff; font-weight:600; }
+  .btn.secondary { background:#fff; color:#111; }
+  .hint { color:#6b7280; font-size:12px; }
+  .preview-wrap { margin-top: 18px; padding: 16px; border:1px dashed #d1d5db; border-radius:12px; background:#fafafa; }
+  .sig td, .sig span, .sig a { font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="margin:0 0 8px 0;">회사 메일 서명 생성기</h2>
+    <p class="hint">아래 4가지만 입력하면 됩니다. “서명 복사(HTML)”를 눌러 서명 편집기에 붙여넣으세요.</p>
+
+    <!-- 🔧 ADMIN CONFIG (HR 전용) — Google Drive 단일 로고 -->
+    <script>
+      window.__SIG_CONFIG__ = {
+        address: "서울특별시 강남구 테헤란로 129, 8층 (빗썸금융타워)",
+        link1_text: "featuring",
+        link1_url: "https://featuring.co",
+        link2_text: "DataEffect",
+        link2_url: "https://dataeffect.co.kr",
+        // 요청사항: 로고 200x17 고정
+        logo_width_px: 200,
+        logo_height_px: 17,
+        drive_logo_share_url: "https://drive.google.com/file/d/1zdz3PcTruiI3i8DuK8xHVfm50VrBWGlu/view?usp=sharing"
+      };
+    </script>
+
+    <div class="grid">
+      <div>
+        <label>이름 (영문/한글)</label>
+        <input id="name" value="Doe 홍길동">
+      </div>
+      <div>
+        <label>부서 / 직함</label>
+        <input id="title" value="경영관리본부 / HR Manager">
+      </div>
+      <div>
+        <label>이메일</label>
+        <input id="email" value="doe@featuring.in">
+      </div>
+      <div>
+        <label>휴대폰</label>
+        <input id="mobile" value="010 1234 5678">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:16px;">
+      <button class="btn" id="copyHtml">서명 복사(HTML)</button>
+      <button class="btn secondary" id="selectPreview">미리보기 선택</button>
+      <span id="msg" class="hint" style="margin-left:8px;"></span>
+    </div>
+
+    <div class="preview-wrap">
+      <div id="preview" class="sig"></div>
+    </div>
+  </div>
+
+<script>
+function escapeHtml(str){return str.replace(/[&<>'"]/g, t=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));}
+function h(v){return escapeHtml(v.trim());}
+
+function driveDirectUrlFrom(input){
+  if(!input) return "";
+  let id = "";
+  try {
+    const u = new URL(input);
+    const m = u.pathname.match(/\/d\/([^/]+)/);
+    if (m && m[1]) id = m[1];
+    if (!id && u.searchParams.get("id")) id = u.searchParams.get("id");
+  } catch(e){
+    id = input;
+  }
+  return id ? `https://drive.google.com/uc?export=view&id=${id}` : "";
+}
+
+function formatNameBoldEnglishOnly(nameRaw){
+  const name = nameRaw;
+  const m = name.match(/^[\x20-\x7E]+/);
+  if (!m) return name;
+  const eng = m[0].trimEnd();
+  if (!eng) return name;
+  const rest = name.slice(eng.length);
+  return '<span style="font-weight:700;">' + eng + '</span>' + rest;
+}
+
+function build(){
+  const C = window.__SIG_CONFIG__;
+  const name=h(document.getElementById('name').value);
+  const title=h(document.getElementById('title').value);
+  const email=h(document.getElementById('email').value);
+  const mobile=h(document.getElementById('mobile').value);
+
+  const telHref = 'tel:' + mobile.replace(/[^0-9+]/g,'');
+  const mailHref = 'mailto:' + email; // 요청: 복사 시점의 최종 이메일을 mailto로 사용
+
+  const nameHtml = formatNameBoldEnglishOnly(name);
+  const logoUrl = driveDirectUrlFrom(C.drive_logo_share_url);
+
+  const html = `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
+  <tr><td style="padding:0 0 4px 0;">${nameHtml}</td></tr>
+  <tr><td style="padding:0 0 4px 0;">${title}</td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <a href="${telHref}" style="color:#111; text-decoration:none;">${mobile}</a></td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Email.</span> <a href="${mailHref}" style="color:#2563eb; text-decoration:underline;">${email}</a></td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Address.</span> <span>${C.address}</span></td></tr>
+  <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a></td></tr>
+  <tr><td style="padding-top:6px;">${logoUrl ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoUrl}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''}</td></tr>
+</table>`;
+
+  document.getElementById('preview').innerHTML = html;
+  return html;
+}
+
+// ---- 복사 로직 (웹호스팅/Pages에서 안정적) ----
+function copyHtml(){
+  const html = build();
+  const helper = document.createElement('div');
+  helper.setAttribute('contenteditable', 'true');
+  helper.style.position = 'fixed';
+  helper.style.left = '-99999px';
+  helper.style.whiteSpace = 'pre-wrap';
+  helper.innerHTML = html;
+  document.body.appendChild(helper);
+
+  const range = document.createRange();
+  range.selectNodeContents(helper);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+
+  document.body.removeChild(helper);
+  sel.removeAllRanges();
+
+  if (ok) { msg('서명이 클립보드(HTML)로 복사되었습니다.'); return; }
+  selectPreview(true);
+  msg('자동 복사가 제한되었습니다. Ctrl/⌘+C 로 복사하세요.');
+}
+
+function selectPreview(focusOnly){
+  build();
+  const target = document.getElementById('preview');
+  const range = document.createRange();
+  range.selectNode(target);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  if (!focusOnly) msg('미리보기를 선택했습니다. Ctrl/⌘+C 로 복사하세요.');
+}
+
+function msg(t){document.getElementById('msg').textContent=t; setTimeout(()=>{document.getElementById('msg').textContent='';}, 4500);}
+
+for (const id of ['name','title','email','mobile']) {
+  document.getElementById(id).addEventListener('input', build);
+}
+document.getElementById('copyHtml').addEventListener('click', copyHtml);
+document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
+build();
+</script>
+</body>
+</html>
