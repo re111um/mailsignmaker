@@ -1,37 +1,45 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title> Featuring 메일 서명 생성기</title>
-<style>
-  :root { --radius: 16px; }
-  body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; margin: 24px; background:#fff; color:#111; }
-  .card { max-width: 880px; padding: 20px; border: 1px solid #e5e7eb; border-radius: var(--radius); box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  label { font-weight: 600; font-size: 14px; color:#111; display:block; margin-bottom: 6px; }
-  input { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; }
-  .row { display:flex; gap:12px; align-items:center; }
-  .btn { cursor:pointer; padding:10px 14px; border-radius:12px; border:1px solid #d1d5db; background:#111; color:#fff; font-weight:600; }
-  .btn.secondary { background:#fff; color:#111; }
-  .hint { color:#6b7280; font-size:12px; }
-  .preview-wrap { margin-top: 18px; padding: 16px; border:1px dashed #d1d5db; border-radius:12px; background:#fafafa; }
-  .sig td, .sig span, .sig a { font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111; }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Featuring 메일 서명 생성기</title>
+  <style>
+    :root { --radius: 16px; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; margin: 24px; background:#fff; color:#111; }
+    .card { max-width: 880px; padding: 20px; border: 1px solid #e5e7eb; border-radius: var(--radius); box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    label { font-weight: 600; font-size: 14px; color:#111; display:block; margin-bottom: 6px; }
+    input { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; }
+    .row { display:flex; gap:12px; align-items:center; }
+    .btn { cursor:pointer; padding:10px 14px; border-radius:12px; border:1px solid #d1d5db; background:#111; color:#fff; font-weight:600; }
+    .btn.secondary { background:#fff; color:#111; }
+    .hint { color:#6b7280; font-size:12px; }
+    .preview-wrap { margin-top: 18px; padding: 16px; border:1px dashed #d1d5db; border-radius:12px; background:#fafafa; }
+    .sig td, .sig span, .sig a { font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111; }
+
+    /* anchor 버튼을 실제 버튼과 동일하게 (밑줄 제거/폰트 통일) */
     a.btn, a.btn:link, a.btn:visited, a.btn:hover, a.btn:active {
-      text-decoration: none !important;   /* 밑줄 제거 */
-      color: #111 !important;             /* 링크 기본색 무시 */
+      text-decoration: none !important;
+      color: #111 !important;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-      font-size: 14px;                    /* [미리보기 선택]과 동일 */
+      font-size: 14px;
       line-height: 1;
       font-weight: 600;
-</style>
+    }
+
+    /* 보조 버튼 묶음 및 메시지 위치 */
+    .btn-group { display: flex; gap: 12px; align-items: center; flex-wrap: nowrap; }
+    #msg { white-space: nowrap; }
+    #msg:empty { display: none; }
+  </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin:0 0 8px 0;">메일 서명 생성기</h2>
     <p class="hint">아래 4가지만 입력하면 됩니다. “서명 복사”를 눌러 Gmail 메일 서명 설정에 붙여넣으세요.</p>
 
-    <!-- 🔧 ADMIN CONFIG (HR 전용) — Google Drive 단일 로고 -->
+    <!-- 🔧 ADMIN CONFIG -->
     <script>
       window.__SIG_CONFIG__ = {
         address: "서울특별시 강남구 테헤란로 129, 8층 (빗썸금융타워)",
@@ -39,13 +47,12 @@
         link1_url: "https://featuring.co",
         link2_text: "DataEffect",
         link2_url: "https://enterprise.featuring.co/?utm_source=featuring&utm_medium=gnb",
-        // 요청사항: 로고 200x17 고정
         logo_width_px: 200,
         logo_height_px: 17,
-        logo_url: "https://re111um.github.io/mailsignmaker/assets/logo.png"  // 이 저장소 안의 상대 경로
-  };
-</script>
-
+        /* 절대 URL (GitHub Pages에서 서빙) */
+        logo_url: "https://re111um.github.io/mailsignmaker/assets/logo.png"
+      };
+    </script>
 
     <div class="grid">
       <div>
@@ -66,57 +73,51 @@
       </div>
     </div>
 
-<div class="row" style="margin-top:16px;">
-  <button class="btn" id="copyHtml">서명 복사</button>
+    <div class="row" style="margin-top:16px;">
+      <button class="btn" id="copyHtml">서명 복사</button>
 
-  <!-- 보조 버튼 묶음: 미리보기 선택 + 메일서명설정 + 메시지 -->
-  <div class="btn-group">
-    <a class="btn secondary" href="#" onclick="selectPreview(false); return false;">미리보기 선택</a>
-    <a class="btn secondary"
-       id="openGmailSettings"
-       href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#settings/general"
-       target="_blank" rel="noopener noreferrer">메일서명설정 바로가기</a>
-    <!-- 메시지는 '메일서명설정' 버튼 바로 뒤에 1개만! -->
-    <span id="msg" class="hint"></span>
+      <!-- 보조 버튼 묶음 -->
+      <div class="btn-group">
+        <a class="btn secondary" href="#" onclick="selectPreview(false); return false;">미리보기 선택</a>
+        <a class="btn secondary" id="openGmailSettings"
+           href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#settings/general"
+           target="_blank" rel="noopener noreferrer">메일서명설정 바로가기</a>
+        <span id="msg" class="hint"></span>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div id="preview" class="sig"></div>
+    </div>
   </div>
-</div>
 
-<div class="preview-wrap">
-  <div id="preview" class="sig"></div>
-</div>
+  <script>
+    function escapeHtml(str){return str.replace(/[&<>'"]/g, t=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));}
+    function h(v){return escapeHtml(v.trim());}
 
-  
-<script>
-function escapeHtml(str){return str.replace(/[&<>'"]/g, t=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));}
-function h(v){return escapeHtml(v.trim());}
+    function formatNameBoldEnglishOnly(nameRaw){
+      const name = nameRaw;
+      const m = name.match(/^[\x20-\x7E]+/);
+      if (!m) return name;
+      const eng = m[0].trimEnd();
+      if (!eng) return name;
+      const rest = name.slice(eng.length);
+      return '<span style="font-weight:700;">' + eng + '</span>' + rest;
+    }
 
+    function build(){
+      const C = window.__SIG_CONFIG__;
+      const name   = h(document.getElementById('name').value);
+      const title  = h(document.getElementById('title').value);
+      const email  = h(document.getElementById('email').value);
+      const mobile = h(document.getElementById('mobile').value);
 
-function formatNameBoldEnglishOnly(nameRaw){
-  const name = nameRaw;
-  const m = name.match(/^[\x20-\x7E]+/);
-  if (!m) return name;
-  const eng = m[0].trimEnd();
-  if (!eng) return name;
-  const rest = name.slice(eng.length);
-  return '<span style="font-weight:700;">' + eng + '</span>' + rest;
-}
+      const telHref  = 'tel:' + mobile.replace(/[^0-9+]/g,'');
+      const mailHref = 'mailto:' + email;
+      const nameHtml = formatNameBoldEnglishOnly(name);
+      const logoUrl  = C.logo_url;
 
-function build(){
-  const C = window.__SIG_CONFIG__;
-  const name=h(document.getElementById('name').value);
-  const title=h(document.getElementById('title').value);
-  const email=h(document.getElementById('email').value);
-  const mobile=h(document.getElementById('mobile').value);
-
-  const telHref = 'tel:' + mobile.replace(/[^0-9+]/g,'');
-  const mailHref = 'mailto:' + email; // 요청: 복사 시점의 최종 이메일을 mailto로 사용
-
-  const nameHtml = formatNameBoldEnglishOnly(name);
-
-    /* ✅ 여기만 변경 */
-  const logoUrl = C.logo_url; // 절대 URL 그대로 사용
-
-  const html = `
+      const html = `
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
   <tr><td style="padding:0 0 4px 0;">${nameHtml}</td></tr>
   <tr><td style="padding:0 0 4px 0;">${title}</td></tr>
@@ -126,93 +127,72 @@ function build(){
   <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a></td></tr>
   <tr><td style="padding-top:6px;">${logoUrl ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoUrl}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''}</td></tr>
 </table>`;
+      document.getElementById('preview').innerHTML = html;
+      return html;
+    }
 
-  document.getElementById('preview').innerHTML = html;
-  return html;
-}
+    function copyHtml(){
+      const html = build();
+      const helper = document.createElement('div');
+      helper.setAttribute('contenteditable', 'true');
+      helper.style.position = 'fixed';
+      helper.style.left = '-99999px';
+      helper.style.whiteSpace = 'pre-wrap';
+      helper.innerHTML = html;
+      document.body.appendChild(helper);
 
-// ---- 복사 로직 (웹호스팅/Pages에서 안정적) ----
-function copyHtml(){
-  const html = build();
-  const helper = document.createElement('div');
-  helper.setAttribute('contenteditable', 'true');
-  helper.style.position = 'fixed';
-  helper.style.left = '-99999px';
-  helper.style.whiteSpace = 'pre-wrap';
-  helper.innerHTML = html;
-  document.body.appendChild(helper);
+      const range = document.createRange();
+      range.selectNodeContents(helper);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
 
-  const range = document.createRange();
-  range.selectNodeContents(helper);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
 
-  let ok = false;
-  try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+      document.body.removeChild(helper);
+      sel.removeAllRanges();
 
-  document.body.removeChild(helper);
-  sel.removeAllRanges();
+      if (ok) { msg('서명이 클립보드(HTML)로 복사되었습니다.'); return; }
+      selectPreview(true);
+      msg('자동 복사가 제한되었습니다. Ctrl/⌘+C 로 복사하세요.');
+    }
 
-  if (ok) { msg('서명이 클립보드(HTML)로 복사되었습니다.'); return; }
-  selectPreview(true);
-  msg('자동 복사가 제한되었습니다. Ctrl/⌘+C 로 복사하세요.');
-}
+    function selectPreview(focusOnly){
+      build();
+      const target = document.getElementById('preview');
+      if (!target) { msg('미리보기 영역을 찾을 수 없어요.'); return; }
+      const range = document.createRange();
+      range.selectNode(target);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      if (!focusOnly) msg('미리보기를 선택했습니다. Ctrl/⌘+C 로 복사하세요.');
+    }
 
-function selectPreview(focusOnly){
-  build();
-  const target = document.getElementById('preview');
-  const range = document.createRange();
-  range.selectNode(target);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-  if (!focusOnly) msg('미리보기를 선택했습니다. Ctrl/⌘+C 로 복사하세요.');
-}
+    function msg(t){
+      const el = document.getElementById('msg');
+      if (!el) return;
+      el.textContent = t;
+      setTimeout(()=>{ el.textContent=''; }, 4500);
+    }
 
-function msg(t){document.getElementById('msg').textContent=t; setTimeout(()=>{document.getElementById('msg').textContent='';}, 4500);}
+    /* 이벤트 바인딩 */
+    for (const id of ['name','title','email','mobile']) {
+      document.getElementById(id).addEventListener('input', build);
+    }
+    document.getElementById('copyHtml').addEventListener('click', copyHtml);
+    // '미리보기 선택'은 a태그 onclick으로 호출함
 
-for (const id of ['name','title','email','mobile']) {
-  document.getElementById(id).addEventListener('input', build);
-}
-document.getElementById('copyHtml').addEventListener('click', copyHtml);
-document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
-function selectPreview(focusOnly){
-  build();
-  const target = document.getElementById('preview');
-  const range = document.createRange();
-  range.selectNode(target);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-  if (!focusOnly) msg('미리보기를 선택했습니다. Ctrl/⌘+C 로 복사하세요.');
-}
-
-function msg(t){
-  document.getElementById('msg').textContent = t;
-  setTimeout(()=>{ document.getElementById('msg').textContent=''; }, 4500);
-}
-
-for (const id of ['name','title','email','mobile']) {
-  document.getElementById(id).addEventListener('input', build);
-}
-document.getElementById('copyHtml').addEventListener('click', copyHtml);
-
-// ❌ 이 줄은 지웁니다. (id="selectPreview"가 없어서 에러 발생)
-// document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
-
-// ✅ 초기 1회 렌더(IIFE). <script> 안에 또 <script> 넣지 마세요!
-(function initPreview(){
-  const start = () => { try { build(); } catch(e) { console.error(e); } };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
-})();
-
-  
-</script>
-</script>
+    /* 초기 1회 렌더 보장 */
+    (function initPreview(){
+      const start = () => { try { build(); } catch(e) { console.error(e); } };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start, { once: true });
+      } else {
+        start();
+      }
+    })();
+  </script>
 </body>
 </html>
