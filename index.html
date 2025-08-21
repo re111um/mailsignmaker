@@ -177,22 +177,41 @@ for (const id of ['name','title','email','mobile']) {
 }
 document.getElementById('copyHtml').addEventListener('click', copyHtml);
 document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
-<script>
-(function initPreview() {
-  const start = () => {
-    try { build(); } catch (e) { console.error('init build failed', e); }
-  };
+function selectPreview(focusOnly){
+  build();
+  const target = document.getElementById('preview');
+  const range = document.createRange();
+  range.selectNode(target);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  if (!focusOnly) msg('미리보기를 선택했습니다. Ctrl/⌘+C 로 복사하세요.');
+}
 
+function msg(t){
+  document.getElementById('msg').textContent = t;
+  setTimeout(()=>{ document.getElementById('msg').textContent=''; }, 4500);
+}
+
+for (const id of ['name','title','email','mobile']) {
+  document.getElementById(id).addEventListener('input', build);
+}
+document.getElementById('copyHtml').addEventListener('click', copyHtml);
+
+// ❌ 이 줄은 지웁니다. (id="selectPreview"가 없어서 에러 발생)
+// document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
+
+// ✅ 초기 1회 렌더(IIFE). <script> 안에 또 <script> 넣지 마세요!
+(function initPreview(){
+  const start = () => { try { build(); } catch(e) { console.error(e); } };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
-    start();                      // DOM이 이미 준비된 경우 즉시
+    start();
   }
-
-  // 안전장치: 로드 완료 시 한 번 더, 그리고 다음 틱에서도 한 번 더
-  window.addEventListener('load', start, { once: true });
-  setTimeout(start, 0);
 })();
+
+  
 </script>
 </script>
 </body>
