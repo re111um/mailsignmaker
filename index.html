@@ -177,14 +177,23 @@ for (const id of ['name','title','email','mobile']) {
 }
 document.getElementById('copyHtml').addEventListener('click', copyHtml);
 document.getElementById('selectPreview').addEventListener('click', ()=>selectPreview(false));
+<script>
 (function initPreview() {
-  const run = () => build();
+  const start = () => {
+    try { build(); } catch (e) { console.error('init build failed', e); }
+  };
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run, { once: true });
+    document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
-    run();
+    start();                      // DOM이 이미 준비된 경우 즉시
   }
+
+  // 안전장치: 로드 완료 시 한 번 더, 그리고 다음 틱에서도 한 번 더
+  window.addEventListener('load', start, { once: true });
+  setTimeout(start, 0);
 })();
+</script>
 </script>
 </body>
 </html>
