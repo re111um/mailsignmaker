@@ -17,6 +17,13 @@
   .hint { color:#6b7280; font-size:12px; }
   .preview-wrap { margin-top: 18px; padding: 16px; border:1px dashed #d1d5db; border-radius:12px; background:#fafafa; }
   .sig td, .sig span, .sig a { font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111; }
+    a.btn, a.btn:link, a.btn:visited, a.btn:hover, a.btn:active {
+      text-decoration: none !important;   /* 밑줄 제거 */
+      color: #111 !important;             /* 링크 기본색 무시 */
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      font-size: 14px;                    /* [미리보기 선택]과 동일 */
+      line-height: 1;
+      font-weight: 600;
 </style>
 </head>
 <body>
@@ -73,6 +80,7 @@
     </div>
   </div>
 
+  
 <script>
 function escapeHtml(str){return str.replace(/[&<>'"]/g, t=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));}
 function h(v){return escapeHtml(v.trim());}
