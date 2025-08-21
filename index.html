@@ -95,6 +95,18 @@
     function escapeHtml(str){return str.replace(/[&<>'"]/g, t=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));}
     function h(v){return escapeHtml(v.trim());}
 
+      function formatMobileKR(raw){
+    const d = (raw || '').replace(/\D+/g, ''); // 숫자만 추출
+    if (d.length === 11) return d.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3'); // 010 1234 5678
+    if (d.length === 10) return d.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1 $2 $3'); // 011 234 5678 등
+    return raw; // 그 외 길이: 입력 그대로
+  }
+  <!-- ADD END -->
+
+  function formatNameBoldEnglishOnly(nameRaw){
+    /* ...기존 그대로... */
+  }
+    
     function formatNameBoldEnglishOnly(nameRaw){
       const name = nameRaw;
       const m = name.match(/^[\x20-\x7E]+/);
@@ -110,9 +122,8 @@
       const name   = h(document.getElementById('name').value);
       const title  = h(document.getElementById('title').value);
       const email  = h(document.getElementById('email').value);
-      const mobile = h(document.getElementById('mobile').value);
-
-      const telHref  = 'tel:' + mobile.replace(/[^0-9+]/g,'');
+      const mobileRaw     = document.getElementById('mobile').value; // 원문(숫자/공백/하이픈 허용)
+      const mobileDisplay = formatMobileKR(mobileRaw);               // 화면 표시용(공백 포함)
       const mailHref = 'mailto:' + email;
       const nameHtml = formatNameBoldEnglishOnly(name);
       const logoUrl  = C.logo_url;
@@ -121,7 +132,7 @@
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
   <tr><td style="padding:0 0 4px 0;">${nameHtml}</td></tr>
   <tr><td style="padding:0 0 4px 0;">${title}</td></tr>
-  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <a href="${telHref}" style="color:#111; text-decoration:none;">${mobile}</a></td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <span>${mobileDisplay}</span></td></tr>
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Email.</span> <a href="${mailHref}" style="color:#2563eb; text-decoration:underline;">${email}</a></td></tr>
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Address.</span> <span>${C.address}</span></td></tr>
   <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a></td></tr>
