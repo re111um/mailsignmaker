@@ -66,26 +66,24 @@
       </div>
     </div>
 
- <div class="row" style="margin-top:16px;">
+<div class="row" style="margin-top:16px;">
   <button class="btn" id="copyHtml">서명 복사</button>
 
-
-<!-- ADD: 두 보조 버튼을 묶는 그룹 -->
-<div class="btn-group">
-  <a class="btn secondary" href="#" onclick="selectPreview(false); return false;">미리보기 선택</a>
-    <span id="msg" class="hint" style="margin-left:8px;"></span>
-  <a class="btn secondary"
-  href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#settings/general"
-  target="_blank" rel="noopener noreferrer">메일서명설정 바로가기</a>
-  <!-- moved: 메시지 표시 -->
+  <!-- 보조 버튼 묶음: 미리보기 선택 + 메일서명설정 + 메시지 -->
+  <div class="btn-group">
+    <a class="btn secondary" href="#" onclick="selectPreview(false); return false;">미리보기 선택</a>
+    <a class="btn secondary"
+       id="openGmailSettings"
+       href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#settings/general"
+       target="_blank" rel="noopener noreferrer">메일서명설정 바로가기</a>
+    <!-- 메시지는 '메일서명설정' 버튼 바로 뒤에 1개만! -->
     <span id="msg" class="hint"></span>
   </div>
-   </div>
-    
-      <div class="preview-wrap">
-      <div id="preview" class="sig">  
 </div>
-  </div>
+
+<div class="preview-wrap">
+  <div id="preview" class="sig"></div>
+</div>
 
   
 <script>
