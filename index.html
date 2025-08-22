@@ -258,32 +258,38 @@
       setTimeout(()=>{ el.textContent=''; }, 4500);
     }
 
-    /* 이벤트 바인딩 */
- function bindEvents(){
+    /* ▼▼▼ REPLACE FROM HERE: 안전한 이벤트 바인딩 + 초기 렌더 */
+    function on(id, type, handler){
+      const el = document.getElementById(id);
+      if (!el) { console.warn('[bind skipped] #' + id + ' not found'); return; }
+      el.addEventListener(type, handler);
+    }
+
+    function bindEvents(){
       // 입력 변화 → 미리보기 리렌더
-      ['name','jobtitle','email','mobile'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', build);
-      });
+      ['name','jobtitle','email','mobile'].forEach(id => on(id, 'input', build));
 
       // 서명 복사 버튼
-      const copyBtn = document.getElementById('copyHtml');
-      if (copyBtn) copyBtn.addEventListener('click', copyHtml);
+      on('copyHtml', 'click', copyHtml);
 
-      const deptOptions = document.getElementById('deptOptions');   // <ul id="deptOptions">
-    if (deptOptions) {
-      // 이벤트 위임: 라디오 옵션을 추가/삭제해도 코드 수정 불필요
-      deptOptions.addEventListener('change', (e) => {
-        const r = e.target.closest('input[name="dept"]');
-        if (!r) return;
-        const v = r.value;
-        document.getElementById('deptValue').value = v;           // <input type="hidden" id="deptValue">
-        document.getElementById('deptSummaryText').textContent = v; // <span id="deptSummaryText">
-        document.getElementById('deptChooser').open = false;      // <details id="deptChooser"> 닫기
-        build();                                                  // 프리뷰 갱신
-      });
+      // 부서 라디오(이벤트 위임: li 추가/삭제해도 유지)
+      const deptOptions = document.getElementById('deptOptions'); // <ul id="deptOptions">
+      if (deptOptions) {
+        deptOptions.addEventListener('change', (e) => {
+          const r = e.target.closest('input[name="dept"]');
+          if (!r) return;
+          const v = r.value;
+          const hidden = document.getElementById('deptValue');
+          const summary = document.getElementById('deptSummaryText');
+          const chooser = document.getElementById('deptChooser');
+          if (hidden)  hidden.value = v;
+          if (summary) summary.textContent = v;
+          if (chooser) chooser.open = false; // 선택 후 닫기
+          build(); // 프리뷰 갱신
+        });
+      }
     }
-    
+
     // 초기 1회: DOM 준비 후 바인딩 + 렌더
     (function init(){
       const start = () => { try { bindEvents(); build(); } catch(e) { console.error(e); } };
