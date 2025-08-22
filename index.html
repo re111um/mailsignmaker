@@ -105,12 +105,40 @@
     flex: 0 0 auto !important;
   }
   .dept .dropdown label:hover { background: #f5f5f5 !important; }  
+  .dept .dropdown {
+  overflow-y: auto;
+  overflow-x: hidden;        /* 가로 스크롤 제거 */
+  text-align: left;
+}
+.dept .dropdown ul { margin: 8px 0; padding: 0; list-style: none; }
+.dept .dropdown li { margin: 0; padding: 0; }
+
+/* 라벨을 2열 그리드: [라디오] [텍스트] */
+.dept .dropdown label {
+  display: grid;
+  grid-template-columns: auto 1fr;  /* 라디오는 내용폭, 텍스트는 남은폭 */
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  line-height: 1.35;
+  white-space: normal;              /* 줄바꿈 허용 */
+  word-break: keep-all;             /* 한글 단어 단위 유지 */
+  overflow-wrap: anywhere;          /* 긴 영문도 줄바꿈 */
+  cursor: pointer;
+}
+.dept .dropdown label:hover { background: #f5f5f5; }
+.dept .dropdown input[type="radio"] { margin: 0; }
+
+/* 텍스트 span(opt)이 grid 영역을 벗어나지 않도록 */
+.dept .dropdown .opt { min-width: 0; color: #111; }  
   </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin:0 0 8px 0;">메일 서명 생성기</h2>
-    <p class="hint">아래 4가지만 입력하면 됩니다. “서명 복사”를 눌러 Gmail 메일 서명 설정에 붙여넣으세요.</p>
+    <p class="hint">아래 4가지만 입력하면 됩니다. [서명 복사]를 눌러 Gmail 메일 서명 설정에 붙여넣으세요.</p>
 
     <!-- 🔧 ADMIN CONFIG -->
     <script>
@@ -145,14 +173,15 @@
         <div class="dropdown">
           <ul id="deptOptions">
             <!-- ▼ 팀 옵션은 여기 li만 추가/삭제하면 됩니다 -->
-            <li><label><input type="radio" name="dept" value="경영관리본부" checked> 경영관리본부</label></li>
-            <li><label><input type="radio" name="dept" value="세일즈&마케팅(S&M) 팀"> 세일즈&마케팅(S&M) 팀</label></li>
-            <li><label><input type="radio" name="dept" value="일본사업개발 팀"> 일본사업개발 팀</label></li>
-            <li><label><input type="radio" name="dept" value="Featuring co. 팀"> Featuring co. 팀</label></li>
-            <li><label><input type="radio" name="dept" value="Enterprise 팀"> Enterprise 팀</label></li>
-            <li><label><input type="radio" name="dept" value="Design 팀"> Design 팀</label></li>
-            <li><label><input type="radio" name="dept" value="Campaign 팀"> Campaign 팀</label></li>
-            <li><label><input type="radio" name="dept" value="Commerce 팀"> Commerce 팀</label></li>
+        <li><label><input type="radio" name="dept" value="경영관리본부" checked> <span class="opt">경영관리본부</span></label></li>
+        <li><label><input type="radio" name="dept" value="세일즈&마케팅(S&M) 팀"> <span class="opt">세일즈&마케팅(S&M) 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="일본사업개발 팀"> <span class="opt">일본사업개발 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="Featuring co. 팀"> <span class="opt">Featuring co. 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="Enterprise 팀"> <span class="opt">Enterprise 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="Design 팀"> <span class="opt">Design 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="Campaign 팀"> <span class="opt">Campaign 팀</span></label></li>
+        <li><label><input type="radio" name="dept" value="Commerce 팀"> <span class="opt">Commerce 팀</span></label></li>
+      </ul>
           </ul>
         </div>
       </details>
