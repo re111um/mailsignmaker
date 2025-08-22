@@ -32,6 +32,28 @@
     .btn-group { display: flex; gap: 12px; align-items: center; flex-wrap: nowrap; }
     #msg { white-space: nowrap; }
     #msg:empty { display: none; }
+   
+    /* ▼▼▼ ADD: '부서' 드롭다운 + 두 칸 분할 레이아웃 */
+  .split-2 { display:flex; gap:16px; }          /* grid의 gap(16px)과 동일 */
+  .split-2 > * { flex:1 1 0; }                  /* 두 입력칸 정확히 반반 */
+
+  .dept { position:relative; }
+  .dept details { position:relative; }
+  .dept summary { list-style:none; cursor:pointer; user-select:none; }
+  .dept summary::-webkit-details-marker { display:none; }
+  .dept .input-like {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; background:#fff;
+    font-size:14px;
+  }
+  .dept .dropdown {
+    position:absolute; z-index:20; top:calc(100% + 6px); left:0; right:0;
+    border:1px solid #d1d5db; border-radius:10px; background:#fff;
+    max-height:240px; overflow:auto; box-shadow:0 10px 20px rgba(0,0,0,.08);
+  }
+  .dept .dropdown ul { margin:8px 0; padding:0; list-style:none; }
+  .dept .dropdown li { padding:6px 12px; }
+  .dept .dropdown label { display:flex; gap:8px; align-items:center; cursor:pointer; }
   </style>
 </head>
 <body>
@@ -59,10 +81,40 @@
         <label>이름 (영문/한글)</label>
         <input id="name" value="Doe 홍길동">
       </div>
-      <div>
-        <label>부서 / 직함</label>
-        <input id="title" value="경영관리본부 / HR Manager">
-      </div>
+    <div>
+  <label>부서 / 직함</label>
+  <div class="split-2">
+    <!-- LEFT: 부서 선택 (라디오 드롭다운) -->
+    <div class="dept">
+      <details id="deptChooser">
+        <summary class="input-like" aria-label="부서 선택">
+          <span id="deptSummaryText">경영관리본부</span>
+          <span aria-hidden="true">▾</span>
+        </summary>
+        <div class="dropdown">
+          <ul id="deptOptions">
+            <!-- ▼ 팀 옵션은 여기 li만 추가/삭제하면 됩니다 -->
+            <li><label><input type="radio" name="dept" value="경영관리본부" checked> 경영관리본부</label></li>
+            <li><label><input type="radio" name="dept" value="세일즈&마케팅(S&M) 팀"> 세일즈&마케팅(S&M) 팀</label></li>
+            <li><label><input type="radio" name="dept" value="일본사업개발 팀"> 일본사업개발 팀</label></li>
+            <li><label><input type="radio" name="dept" value="Featuring co. 팀"> Featuring co. 팀</label></li>
+            <li><label><input type="radio" name="dept" value="Enterprise 팀"> Enterprise 팀</label></li>
+            <li><label><input type="radio" name="dept" value="Design 팀"> Design 팀</label></li>
+            <li><label><input type="radio" name="dept" value="Campaign 팀"> Campaign 팀</label></li>
+            <li><label><input type="radio" name="dept" value="Commerce 팀"> Commerce 팀</label></li>
+          </ul>
+        </div>
+      </details>
+      <!-- 선택 값을 보관하는 hidden input -->
+      <input type="hidden" id="deptValue" value="경영관리본부">
+    </div>
+
+    <!-- RIGHT: 직함 자유 입력 -->
+    <div>
+      <input id="jobtitle" placeholder="직함 입력" value="HR Manager">
+    </div>
+  </div>
+</div>
       <div>
         <label>이메일</label>
         <input id="email" value="doe@featuring.in">
@@ -120,7 +172,9 @@
     function build(){
       const C = window.__SIG_CONFIG__;
       const name   = h(document.getElementById('name').value);
-      const title  = h(document.getElementById('title').value);
+      const dept   = document.getElementById('deptValue').value;
+      const job    = h(document.getElementById('jobtitle').value);
+      const title  = (dept && job) ? `${dept} / ${job}` : (dept || job);
       const email  = h(document.getElementById('email').value);
       const mobileRaw     = document.getElementById('mobile').value; // 원문(숫자/공백/하이픈 허용)
       const mobileDisplay = formatMobileKR(mobileRaw);               // 화면 표시용(공백 포함)
@@ -195,6 +249,20 @@
     document.getElementById('copyHtml').addEventListener('click', copyHtml);
     // '미리보기 선택'은 a태그 onclick으로 호출함
 
+      const deptOptions = document.getElementById('deptOptions');   // <ul id="deptOptions">
+    if (deptOptions) {
+      // 이벤트 위임: 라디오 옵션을 추가/삭제해도 코드 수정 불필요
+      deptOptions.addEventListener('change', (e) => {
+        const r = e.target.closest('input[name="dept"]');
+        if (!r) return;
+        const v = r.value;
+        document.getElementById('deptValue').value = v;           // <input type="hidden" id="deptValue">
+        document.getElementById('deptSummaryText').textContent = v; // <span id="deptSummaryText">
+        document.getElementById('deptChooser').open = false;      // <details id="deptChooser"> 닫기
+        build();                                                  // 프리뷰 갱신
+      });
+    }
+    
     /* 초기 1회 렌더 보장 */
     (function initPreview(){
       const start = () => { try { build(); } catch(e) { console.error(e); } };
