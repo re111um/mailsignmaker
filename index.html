@@ -70,6 +70,20 @@
   .dept .dropdown input[type="radio"] {
     margin: 0; flex: 0 0 auto;
   }  
+  .dept .dropdown { text-align: left; }
+  .dept .dropdown ul { margin: 8px 0; padding: 0; list-style: none; }
+  .dept .dropdown li { padding: 4px 12px; }
+  .dept .dropdown label {
+    display: inline-flex;       /* 라디오 + 텍스트 한 줄 */
+    align-items: center;
+    gap: 8px;                   /* 라디오와 텍스트 간격 */
+    width: 100%;                /* 클릭영역 넓게 */
+    white-space: nowrap;        /* 줄바꿈 금지 */
+    cursor: pointer;
+}
+  .dept .dropdown input[type="radio"] {
+    margin: 0; flex: 0 0 auto;
+}
   </style>
 </head>
 <body>
