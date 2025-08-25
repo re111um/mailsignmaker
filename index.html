@@ -140,21 +140,21 @@
     <p class="hint">아래 4가지만 입력하면 됩니다. [서명 복사]를 눌러 Gmail 메일 서명 설정에 붙여넣으세요.</p>
 
     <!-- 🔧 ADMIN CONFIG -->
-    <script>
-      window.__SIG_CONFIG__ = {
-        address: "서울특별시 강남구 테헤란로 129, 8층 (빗썸금융타워)",
-        link1_text: "featuring",
-        link1_url: "https://featuring.co",
-        link2_text: "featuring enterprise",
-        link2_url: "https://enterprise.featuring.co/?utm_source=featuring&utm_medium=gnb",
-        logo_width_px: 282,
-        logo_height_px: 26,
-        /* 절대 URL (GitHub Pages에서 서빙) */
-        "https://re111um.github.io/mailsignmaker/assets/logo.png",
-    /* ▼ ADD: 로고 캐시 버전 (로고 바꿀 때만 숫자 갱신) */
-        logo_version: "20250826"
-      };
-    </script>
+<script>
+  window.__SIG_CONFIG__ = {
+    address: "서울특별시 강남구 테헤란로 129, 8층 (빗썸금융타워)",
+    link1_text: "featuring",
+    link1_url: "https://featuring.co",
+    link2_text: "featuring enterprise",
+    link2_url: "https://enterprise.featuring.co/?utm_source=featuring&utm_medium=gnb",
+    logo_width_px: 282,
+    logo_height_px: 26,
+    /* GitHub Pages의 로고 절대경로 */
+    logo_url: "https://re111um.github.io/mailsignmaker/assets/logo.png",
+    /* 새 로고로 교체할 때마다 이 값만 바꿔 커밋하세요 */
+    logo_version: "20250826"
+  };
+</script>
 
     <div class="grid">
       <div>
@@ -250,36 +250,46 @@
       return '<span style="font-weight:700;">' + eng + '</span>' + rest;
     }
 
-    function build(){
-      const C = window.__SIG_CONFIG__;
-      const name   = h(document.getElementById('name').value);
-      const dept   = document.getElementById('deptValue').value;
-      const job    = h(document.getElementById('jobtitle').value);
-      const title  = (dept && job) ? `${dept} / ${job}` : (dept || job);
-      const email  = h(document.getElementById('email').value);
-      const mobileRaw     = document.getElementById('mobile').value; // 원문(숫자/공백/하이픈 허용)
-      const mobileDisplay = formatMobileKR(mobileRaw);               // 화면 표시용(공백 포함)
-      const mailHref = 'mailto:' + email;
-      const nameHtml = formatNameBoldEnglishOnly(name);
-      const rawLogo = C.logo_url || "";
-      const ver = C.logo_version || Date.now();         // config 없으면 현재시각으로
-      const logoSrc = rawLogo
-        ? rawLogo + (rawLogo.includes("?") ? "&" : "?") + "v=" + ver
-        : "";
-      
-      const html = `
+function build(){
+  // __SIG_CONFIG__ 없을 때도 터지지 않도록 안전 기본값 병합
+  const C = Object.assign({
+    address: "", link1_text: "", link1_url: "#",
+    link2_text: "", link2_url: "#",
+    logo_width_px: 200, logo_height_px: 17,
+    logo_url: "", logo_version: ""
+  }, window.__SIG_CONFIG__ || {});
+
+  const name   = h(document.getElementById('name').value);
+  const dept   = document.getElementById('deptValue') ? document.getElementById('deptValue').value : "";
+  const job    = document.getElementById('jobtitle')  ? h(document.getElementById('jobtitle').value) : "";
+  const title  = (dept && job) ? `${dept} / ${job}` : (dept || job);
+  const email  = h(document.getElementById('email').value);
+  const mobile = document.getElementById('mobile').value;
+
+  const nameHtml = formatNameBoldEnglishOnly(name);
+
+  // 캐시 무력화된 로고 src 계산
+  const rawLogo = C.logo_url || "";
+  const ver     = String(C.logo_version || "");
+  const logoSrc = rawLogo
+    ? rawLogo + (rawLogo.includes("?") ? "&" : "?") + "v=" + (ver || Date.now())
+    : "";
+
+  const html = `
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
   <tr><td style="padding:0 0 4px 0;">${nameHtml}</td></tr>
   <tr><td style="padding:0 0 4px 0;">${title}</td></tr>
-  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <span>${mobileDisplay}</span></td></tr>
-  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Email.</span> <a href="${mailHref}" style="color:#2563eb; text-decoration:underline;">${email}</a></td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <span>${formatMobileKR ? formatMobileKR(mobile) : mobile}</span></td></tr>
+  <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Email.</span> <a href="mailto:${email}" style="color:#2563eb; text-decoration:underline;">${email}</a></td></tr>
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Address.</span> <span>${C.address}</span></td></tr>
   <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a></td></tr>
-  <tr><td style="padding-top:6px;">${logoUrl ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoUrl}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''}</td></tr>
+  <tr><td style="padding-top:6px;">${
+    logoSrc ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoSrc}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''
+  }</td></tr>
 </table>`;
-      document.getElementById('preview').innerHTML = html;
-      return html;
-    }
+  document.getElementById('preview').innerHTML = html;
+  return html;
+}
 
     function copyHtml(){
       const html = build();
