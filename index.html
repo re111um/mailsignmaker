@@ -150,7 +150,9 @@
         logo_width_px: 282,
         logo_height_px: 26,
         /* 절대 URL (GitHub Pages에서 서빙) */
-        logo_url: "https://re111um.github.io/mailsignmaker/assets/logo.png"
+        "https://re111um.github.io/mailsignmaker/assets/logo.png",
+    /* ▼ ADD: 로고 캐시 버전 (로고 바꿀 때만 숫자 갱신) */
+        logo_version: "20250825"
       };
     </script>
 
@@ -259,7 +261,13 @@
       const mobileDisplay = formatMobileKR(mobileRaw);               // 화면 표시용(공백 포함)
       const mailHref = 'mailto:' + email;
       const nameHtml = formatNameBoldEnglishOnly(name);
-      const logoUrl  = C.logo_url;
+      const rawLogo = C.logo_url || "";
+      const ver = C.logo_version || Date.now();         // config 없으면 현재시각으로
+      const logoSrc = rawLogo
+        ? rawLogo + (rawLogo.includes("?") ? "&" : "?") + "v=" + ver
+        : "";
+
+  const html = `
 
       const html = `
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
