@@ -294,16 +294,32 @@ function build(){
     logoSrc ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoSrc}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''
   }</td></tr>
 
-    <tr><td style="padding-top:8px;">
-    ${introSrc ? `<a href="https://drive.google.com/file/d/1kAwEuoOHOst4k6DP3NGJCG1N2QVmc4Oh/view" target="_blank" rel="noopener noreferrer" style="margin-right:8px; display:inline-block;">
-      <img alt="피처링 회사 소개서" src="${introSrc}" width="170" height="52" style="border:0; vertical-align:middle;">
-    </a>` : ''}
+  <tr><td style="padding-top:8px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+        style="border-collapse:collapse; font-size:0; line-height:0;">
+  <tr>
+  ${introSrc ? `
+   <td style="padding:0 8px 0 0;">
+ <a href="https://drive.google.com/file/d/1kAwEuoOHOst4k6DP3NGJCG1N2QVmc4Oh/view"
+target="_blank" rel="noopener noreferrer" style="display:inline-block;">
+ <img alt="피처링 회사 소개서"
+ src="${introSrc}" width="170" height="52"
+  style="display:block; border:0; vertical-align:top;">
+  </a>
+  </td>` : ''}
 
-    ${newsSrc ? `<a href="https://featuring.co/newsletter" target="_blank" rel="noopener noreferrer" style="display:inline-block;">
-      <img alt="뉴스레터 구독하기" src="${newsSrc}" width="173" height="52" style="border:0; vertical-align:middle;">
-    </a>` : ''}
-  </td></tr>
-  
+   ${newsSrc ? `
+  <td style="padding:0;">
+      <a href="https://featuring.co/newsletter"
+       target="_blank" rel="noopener noreferrer" style="display:inline-block;">
+        <img alt="뉴스레터 구독하기"
+          src="${newsSrc}" width="173" height="52"
+         style="display:block; border:0; vertical-align:top;">
+       </a>
+     </td>` : ''}
+    </tr>
+  </table>
+ </td></tr>
 </table>`;
   document.getElementById('preview').innerHTML = html;
   return html;
