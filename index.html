@@ -151,8 +151,10 @@
     logo_height_px: 26,
     /* GitHub Pages의 로고 절대경로 */
     logo_url: "https://re111um.github.io/mailsignmaker/assets/logo.png",
-    /* 새 로고로 교체할 때마다 이 값만 바꿔 커밋하세요 */
-    logo_version: "20250826"
+    logo_version: "20250930",
+
+    banner_base: "https://re111um.github.io/mailsignmaker/assets",
+    banner_version: "20250930"
   };
 </script>
 
@@ -275,6 +277,11 @@ function build(){
     ? rawLogo + (rawLogo.includes("?") ? "&" : "?") + "v=" + (ver || Date.now())
     : "";
 
+  const bannerBase = C.banner_base || "";
+  const verBanner  = String(C.banner_version || "");
+  const introSrc   = bannerBase ? `${bannerBase}/introduction.png?v=${verBanner || Date.now()}` : "";
+  const newsSrc    = bannerBase ? `${bannerBase}/newletter.png?v=${verBanner || Date.now()}` : "";
+  
   const html = `
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.0; color:#111111;">
   <tr><td style="padding:0 0 4px 0;">${nameHtml}</td></tr>
@@ -286,6 +293,17 @@ function build(){
   <tr><td style="padding-top:6px;">${
     logoSrc ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoSrc}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''
   }</td></tr>
+
+    <tr><td style="padding-top:8px;">
+    ${introSrc ? `<a href="https://drive.google.com/file/d/1kAwEuoOHOst4k6DP3NGJCG1N2QVmc4Oh/view" target="_blank" rel="noopener noreferrer" style="margin-right:8px; display:inline-block;">
+      <img alt="피처링 회사 소개서" src="${introSrc}" width="170" height="52" style="border:0; vertical-align:middle;">
+    </a>` : ''}
+
+    ${newsSrc ? `<a href="https://featuring.co/newsletter" target="_blank" rel="noopener noreferrer" style="display:inline-block;">
+      <img alt="뉴스레터 구독하기" src="${newsSrc}" width="173" height="52" style="border:0; vertical-align:middle;">
+    </a>` : ''}
+  </td></tr>
+  
 </table>`;
   document.getElementById('preview').innerHTML = html;
   return html;
