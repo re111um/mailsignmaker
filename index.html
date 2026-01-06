@@ -296,7 +296,7 @@ function build(){
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Mobile.</span> <span>${formatMobileKR ? formatMobileKR(mobile) : mobile}</span></td></tr>
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Email.</span> <a href="mailto:${email}" style="color:#2563eb; text-decoration:underline;">${email}</a></td></tr>
   <tr><td style="padding:0 0 4px 0;"><span style="color:#666;">Address.</span> <span>${C.address}</span></td></tr>
-  <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a><a href="${C.link3_url}" style="color:#2563eb; text-decoration:underline;">${C.link3_text}</a></td></tr>
+  <tr><td style="padding:0 0 8px 0;"><span style="color:#666;">Link.</span> <a href="${C.link1_url}" style="color:#2563eb; text-decoration:underline;">${C.link1_text}</a> <span style="color:#999;">/</span> <a href="${C.link2_url}" style="color:#2563eb; text-decoration:underline;">${C.link2_text}</a><span style="color:#999;">/</span> <a href="${C.link3_url}" style="color:#2563eb; text-decoration:underline;">${C.link3_text}</a></td></tr>
   <tr><td style="padding:0; font-size:0; line-height:0;">
   ${
     logoSrc ? `<a href="${C.link1_url}" style="display:inline-block; vertical-align:middle;"><img src="${logoSrc}" alt="Company Logo" style="width:${C.logo_width_px}px; height:${C.logo_height_px}px; border:0; vertical-align:middle;"></a>` : ''
